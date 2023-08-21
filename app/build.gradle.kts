@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.jojo.aerocalculator"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.jojo.aerocalculator"
@@ -39,11 +39,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -57,6 +57,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    kotlin {
+        jvmToolchain(17)
+    }
 }
 
 dependencies {
@@ -66,13 +69,14 @@ dependencies {
 
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    implementation("androidx.compose.material3:material3:1.2.0-alpha05")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material3:material3-window-size-class")
+    implementation("androidx.compose.material3:material3-window-size-class:1.2.0-alpha05")
     implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.navigation:navigation-compose:2.7.0")
+    implementation("androidx.navigation:navigation-compose:2.5.3")
 
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("com.google.dagger:hilt-android:2.46.1")

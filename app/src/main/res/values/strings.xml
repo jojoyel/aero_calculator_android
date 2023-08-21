@@ -1,3 +1,10 @@
 <resources>
-	<string name="app_name">AeroCalculator</string>
+	<string name="app_name">Aero Calculator</string>
+
+	<string name="nav_home">Home</string>
+
+	<string name="nav_flight_prep">Flight preparation</string>
+	<string name="nav_tod">Top Of Descent</string>
+	<string name="nav_slope">Slopes, rates of descent</string>
+	<string name="content_desc_symbol_info">Tell me more</string>
 </resources>
