@@ -7,4 +7,7 @@
 	<string name="nav_tod">Top Of Descent</string>
 	<string name="nav_slope">Slopes, rates of descent</string>
 	<string name="content_desc_symbol_info">Tell me more</string>
+	<string name="content_desc_reset">Reset</string>
+	<string name="desc_vz">Vertical speed</string>
+	<string name="desc_deltafl">The difference between your actual FL and your target FL</string>
 </resources>

@@ -52,3 +52,16 @@ fun TextInfo(
         }
     }
 }
+
+@Composable
+fun VzTextInfo() {
+    TextInfo(text = "Vz", description = stringResource(R.string.desc_vz))
+}
+
+@Composable
+fun DeltaFlTextInfo() {
+    TextInfo(
+        text = "ΔFL",
+        description = stringResource(R.string.desc_deltafl)
+    )
+}
