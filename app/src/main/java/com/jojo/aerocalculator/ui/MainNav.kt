@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import com.jojo.aerocalculator.ui.home.HomeScreen
 import com.jojo.aerocalculator.ui.slope.SlopeScreen
 import com.jojo.aerocalculator.ui.tod.TODScreen
+import com.jojo.aerocalculator.ui.wind.WindScreen
 import com.jojo.aerocalculator.util.Routes
 
 @Composable
@@ -32,6 +33,9 @@ fun MainNav(navController: NavHostController, paddingValues: PaddingValues) {
         }
         composable(Routes.Slope.route) {
             SlopeScreen()
+        }
+        composable(Routes.Wind.route) {
+            WindScreen()
         }
     }
 }

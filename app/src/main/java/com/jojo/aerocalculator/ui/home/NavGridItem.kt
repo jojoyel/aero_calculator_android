@@ -13,5 +13,6 @@ enum class NavGridItem(
     val route: String
 ) {
     TOD(0, R.string.nav_tod, R.drawable.ic_tod, Routes.TOD.route),
-    SLOPE(1, R.string.nav_slope, R.drawable.ic_slope, Routes.Slope.route)
+    SLOPE(1, R.string.nav_slope, R.drawable.ic_slope, Routes.Slope.route),
+    WIND(2, R.string.nav_wind, R.drawable.ic_air, Routes.Wind.route)
 }

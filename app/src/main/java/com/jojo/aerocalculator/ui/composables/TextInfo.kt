@@ -65,3 +65,13 @@ fun DeltaFlTextInfo() {
         description = stringResource(R.string.desc_deltafl)
     )
 }
+
+@Composable
+fun FbTextInfo() {
+    TextInfo(text = "Fb", description = stringResource(R.string.desc_fb))
+}
+
+@Composable
+fun VwTextInfo() {
+    TextInfo(text = "Vw", description = stringResource(R.string.desc_vw))
+}

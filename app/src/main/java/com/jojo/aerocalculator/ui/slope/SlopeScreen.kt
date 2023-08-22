@@ -71,7 +71,7 @@ fun VzSlope(modifier: Modifier = Modifier) {
             onValueChange = { gs = it },
             maxLines = 1,
             placeholder = { Text("160") },
-            suffix = { Text(stringResource(R.string.unit_gs)) },
+            suffix = { Text(stringResource(R.string.unit_speed)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
         OutlinedTextField(
@@ -133,7 +133,7 @@ fun PercentSlope(modifier: Modifier = Modifier) {
             onValueChange = { gs = it },
             maxLines = 1,
             placeholder = { Text("160") },
-            suffix = { Text(stringResource(R.string.unit_gs)) },
+            suffix = { Text(stringResource(R.string.unit_speed)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
         Row(verticalAlignment = Alignment.CenterVertically) {

@@ -132,7 +132,7 @@ fun DistanceTod(modifier: Modifier = Modifier) {
                     onValueChange = { gs = it },
                     label = { Text("Ground speed") },
                     maxLines = 1,
-                    suffix = { Text(stringResource(R.string.unit_gs)) },
+                    suffix = { Text(stringResource(R.string.unit_speed)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
             }
