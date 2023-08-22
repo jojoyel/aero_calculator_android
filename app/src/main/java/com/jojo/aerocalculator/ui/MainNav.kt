@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.jojo.aerocalculator.ui.home.HomeScreen
+import com.jojo.aerocalculator.ui.slope.SlopeScreen
 import com.jojo.aerocalculator.ui.tod.TODScreen
 import com.jojo.aerocalculator.util.Routes
 
@@ -30,7 +31,7 @@ fun MainNav(navController: NavHostController, paddingValues: PaddingValues) {
             TODScreen(navController)
         }
         composable(Routes.Slope.route) {
-            Text("In progress")
+            SlopeScreen()
         }
     }
 }

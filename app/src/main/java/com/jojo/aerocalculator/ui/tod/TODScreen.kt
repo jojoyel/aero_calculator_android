@@ -104,11 +104,11 @@ fun DistanceTod(modifier: Modifier = Modifier) {
             exit = fadeOut() + shrinkVertically()
         ) {
             OutlinedTextField(
-                label = { Text("Slope") },
+                label = { Text(stringResource(R.string.slope)) },
                 value = slope,
                 onValueChange = { slope = it },
                 placeholder = { Text("3.0") },
-                suffix = { Text("%") },
+                suffix = { Text(stringResource(R.string.unit_slope)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 maxLines = 1
             )
@@ -124,7 +124,7 @@ fun DistanceTod(modifier: Modifier = Modifier) {
                     onValueChange = { vz = it },
                     maxLines = 1,
                     label = { VzTextInfo() },
-                    suffix = { Text("ft/min") },
+                    suffix = { Text(stringResource(R.string.unit_vz)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
                 OutlinedTextField(
@@ -132,7 +132,7 @@ fun DistanceTod(modifier: Modifier = Modifier) {
                     onValueChange = { gs = it },
                     label = { Text("Ground speed") },
                     maxLines = 1,
-                    suffix = { Text("kts") },
+                    suffix = { Text(stringResource(R.string.unit_gs)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
             }
@@ -156,7 +156,7 @@ fun DistanceTod(modifier: Modifier = Modifier) {
                 },
                 enabled = if (useVz) gs.isNotEmpty() && vz.isNotEmpty() else deltaFl.isNotEmpty() && slope.isNotEmpty()
             ) {
-                Text("Calc.")
+                Text(stringResource(R.string.action_calc))
             }
             IconButton(onClick = { deltaFl = ""; slope = ""; result = null }) {
                 Icon(
@@ -168,9 +168,8 @@ fun DistanceTod(modifier: Modifier = Modifier) {
         OutlinedTextField(
             value = "${result ?: 0}",
             onValueChange = {},
-            suffix = { Text("NM") },
-            readOnly = true,
-            placeholder = { Text("Result") }
+            suffix = { Text(stringResource(R.string.unit_dist)) },
+            readOnly = true
         )
     }
 }
@@ -196,7 +195,7 @@ fun TimeTod(modifier: Modifier = Modifier) {
             value = vz,
             onValueChange = { vz = it },
             placeholder = { Text("1000") },
-            suffix = { Text("ft/min") },
+            suffix = { Text(stringResource(R.string.unit_vz)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             maxLines = 1
         )
@@ -210,7 +209,7 @@ fun TimeTod(modifier: Modifier = Modifier) {
 
                 result = "${calc[0]}:${(calc[1].toIntOrNull() ?: 0) * 60}"
             }, enabled = deltaFl.isNotEmpty() && vz.isNotEmpty()) {
-                Text("Calc.")
+                Text(stringResource(R.string.action_calc))
             }
             IconButton(onClick = { deltaFl = ""; vz = ""; result = null }) {
                 Icon(
@@ -223,8 +222,7 @@ fun TimeTod(modifier: Modifier = Modifier) {
             value = "${result ?: 0}",
             onValueChange = {},
             suffix = { Text("mins") },
-            readOnly = true,
-            placeholder = { Text("Result") }
+            readOnly = true
         )
     }
 }

@@ -6,8 +6,20 @@
 	<string name="nav_flight_prep">Flight preparation</string>
 	<string name="nav_tod">Top Of Descent</string>
 	<string name="nav_slope">Slopes, rates of descent</string>
+
 	<string name="content_desc_symbol_info">Tell me more</string>
 	<string name="content_desc_reset">Reset</string>
+
 	<string name="desc_vz">Vertical speed</string>
 	<string name="desc_deltafl">The difference between your actual FL and your target FL</string>
+
+	<string name="action_calc">Calc.</string>
+
+	<string name="unit_vz" translatable="false">ft/min</string>
+	<string name="unit_gs" translatable="false">kt</string>
+	<string name="unit_slope" translatable="false">%</string>
+	<string name="unit_dist" translatable="false">NM</string>
+
+	<string name="slopes">Slopes</string>
+	<string name="slope">Slope</string>
 </resources>
