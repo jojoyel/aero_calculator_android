@@ -1,5 +1,9 @@
 package com.jojo.aerocalculator.ui.flight_prep
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jojo.aerocalculator.data.models.aircraft.Aircraft
@@ -18,55 +22,83 @@ import javax.inject.Inject
 class FlightPrepViewModel @Inject constructor(private val aircraftRepository: AircraftRepository) :
     ViewModel() {
 
-    private val _distance = MutableStateFlow("")
-    val distance = _distance.asStateFlow()
+    var distance by mutableStateOf("")
+        private set
+    var altDistance by mutableStateOf("")
+        private set
 
-    private val _altDistance = MutableStateFlow("")
-    val altDistance = _altDistance.asStateFlow()
+    private val _allAircraft = MutableStateFlow<List<Aircraft>>(emptyList())
+    val allAircraft = _allAircraft.asStateFlow()
 
-    private val _aircraft = MutableStateFlow<Aircraft?>(null)
-    val aircraft = _aircraft.asStateFlow()
+    var aircraft by mutableStateOf<Aircraft?>(null)
+        private set
 
-    val flightTime =
-        _distance.combine(_aircraft) { d, a -> a?.let { a.baseFactor * (d.toFloatOrNull() ?: 0f) } }
-            .stateIn(viewModelScope, SharingStarted.Lazily, 0.0f)
-    val altTime =
-        _altDistance.combine(_aircraft) { d, a ->
-            a?.let {
-                a.baseFactor * (d.toFloatOrNull() ?: 0f)
-            }
-        }.stateIn(viewModelScope, SharingStarted.Lazily, 0.0f)
+    val flightTime = snapshotFlow { distance }.combine(snapshotFlow { aircraft }) { d, a ->
+        a?.let {
+            a.baseFactor * (d.toFloatOrNull() ?: 0f)
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, 0.0f)
+
+    val altTime = snapshotFlow { altDistance }.combine(snapshotFlow { aircraft }) { d, a ->
+        a?.let {
+            a.baseFactor * (d.toFloatOrNull() ?: 0f)
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, 0.0f)
+
+    var taxiF by mutableStateOf("")
+        private set
+    var tripF by mutableStateOf("")
+        private set
+    var contingencyF by mutableStateOf("")
+        private set
+    var alternateF by mutableStateOf("")
+        private set
+    var finalF by mutableStateOf("")
+        private set
+    var additionalF by mutableStateOf("")
+        private set
+    var discretionaryF by mutableStateOf("")
+        private set
 
     init {
         viewModelScope.launch {
-            _aircraft.update { aircraftRepository.getAllAircraft()[0] }
+            val acList = aircraftRepository.getAllAircraft()
+
+            _allAircraft.update { acList }
+            aircraft = acList[0]
         }
     }
 
-    fun onDistanceChanged(d: String, alternate: Boolean = false) {
-        if (alternate)
-            _altDistance.update { d }
-        else
-            _distance.update { d }
+    fun onFieldChanged(field: String, value: String) {
+        when(field) {
+            "distance" -> distance = value
+            "alt_distance" -> altDistance = value
+            "taxi_fuel" -> taxiF = value
+            "trip_fuel" -> tripF = value
+            "contingency_fuel" -> contingencyF = value
+            "alternate_fuel" -> alternateF = value
+            "final_fuel" -> finalF = value
+            "additional_fuel" -> additionalF = value
+            "discretionary_fuel" -> discretionaryF = value
+        }
     }
 
     fun onAircraftChanged(ICAO: String) {
         viewModelScope.launch {
             aircraftRepository.getByICAO(ICAO)?.let {
-                _aircraft.update { it }
+                aircraft = it
             }
         }
     }
 
     fun onAircraftChangeDetails(value: String, field: String) {
-        _aircraft.update { ac ->
+        aircraft =
             when (field) {
-                "cruiseFF" -> value.toFloatOrNull()?.let { ac?.copy(cruiseFF = it) }
-                "cruisePwr" -> value.toIntOrNull()?.let { ac?.copy(cruisePwr = it) }
-                "holdFF" -> value.toFloatOrNull()?.let { ac?.copy(holdFF = it) }
-                "holdPwr" -> value.toIntOrNull()?.let { ac?.copy(holdPwr = it) }
-                else -> ac
+                "cruiseFF" -> value.toFloatOrNull()?.let { aircraft?.copy(cruiseFF = it) }
+                "cruisePwr" -> value.toIntOrNull()?.let { aircraft?.copy(cruisePwr = it) }
+                "holdFF" -> value.toFloatOrNull()?.let { aircraft?.copy(holdFF = it) }
+                "holdPwr" -> value.toIntOrNull()?.let { aircraft?.copy(holdPwr = it) }
+                else -> aircraft
             }
-        }
     }
 }
