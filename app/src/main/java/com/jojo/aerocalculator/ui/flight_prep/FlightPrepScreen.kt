@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -94,6 +95,13 @@ fun FlightPrepScreen() {
 
         SectionCard(title = "Aircraft information") { _ ->
             viewModel.aircraft?.let { ac ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("${ac.model} - ${ac.enginesNumber} engines")
+                    Spacer(modifier = Modifier.weight(1f))
+                    Button(onClick = { viewModel.onAircraftChangeDetails("", "reset") }) {
+                        Text("Reset")
+                    }
+                }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -173,5 +181,7 @@ fun FlightPrepScreen() {
                     label = { Text("Discretionary") }, suffix = { Text(text = "Gal") })
             }
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }

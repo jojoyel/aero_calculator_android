@@ -70,7 +70,7 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
     }
 
     fun onFieldChanged(field: String, value: String) {
-        when(field) {
+        when (field) {
             "distance" -> distance = value
             "alt_distance" -> altDistance = value
             "taxi_fuel" -> taxiF = value
@@ -95,9 +95,19 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
         aircraft =
             when (field) {
                 "cruiseFF" -> value.toFloatOrNull()?.let { aircraft?.copy(cruiseFF = it) }
+                    ?: run { aircraft }
+
                 "cruisePwr" -> value.toIntOrNull()?.let { aircraft?.copy(cruisePwr = it) }
+                    ?: run { aircraft }
+
                 "holdFF" -> value.toFloatOrNull()?.let { aircraft?.copy(holdFF = it) }
+                    ?: run { aircraft }
+
                 "holdPwr" -> value.toIntOrNull()?.let { aircraft?.copy(holdPwr = it) }
+                    ?: run { aircraft }
+
+                "reset" -> allAircraft.value.first { it.ICAO == aircraft?.ICAO }
+
                 else -> aircraft
             }
     }
