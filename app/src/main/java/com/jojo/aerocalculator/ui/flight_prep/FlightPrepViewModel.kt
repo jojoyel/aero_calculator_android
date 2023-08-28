@@ -16,7 +16,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.lang.Float.max
+import java.text.DecimalFormat
 import javax.inject.Inject
+import kotlin.math.round
+import kotlin.math.roundToInt
 
 @HiltViewModel
 class FlightPrepViewModel @Inject constructor(private val aircraftRepository: AircraftRepository) :
@@ -35,22 +39,29 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
 
     val flightTime = snapshotFlow { distance }.combine(snapshotFlow { aircraft }) { d, a ->
         a?.let {
-            a.baseFactor * (d.toFloatOrNull() ?: 0f)
-        }
-    }.stateIn(viewModelScope, SharingStarted.Lazily, 0.0f)
+            it.baseFactor * (d.toFloatOrNull() ?: 0f)
+        } ?: run { 0f }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
     val altTime = snapshotFlow { altDistance }.combine(snapshotFlow { aircraft }) { d, a ->
         a?.let {
-            a.baseFactor * (d.toFloatOrNull() ?: 0f)
-        }
-    }.stateIn(viewModelScope, SharingStarted.Lazily, 0.0f)
+            it.baseFactor * (d.toFloatOrNull() ?: 0f)
+        } ?: run { 0f }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
     var taxiF by mutableStateOf("")
         private set
-    var tripF by mutableStateOf("")
-        private set
-    var contingencyF by mutableStateOf("")
-        private set
+
+    var tripF = snapshotFlow { aircraft }.combine(flightTime) { a, time ->
+        round((a?.cruiseFF ?: 1f) * (time / 60f))
+    }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
+
+    var contingencyF = snapshotFlow { aircraft }.combine(tripF) { a, tripFuel ->
+        a?.let {
+            (max(tripFuel * 0.05f, (5 * it.cruiseFF) / 60) * 10).roundToInt() / 10f
+        } ?: run { 0f }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
+
     var alternateF by mutableStateOf("")
         private set
     var finalF by mutableStateOf("")
@@ -69,13 +80,31 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
         }
     }
 
+    fun totalFuel(): Float? {
+        return taxiF.toFloatOrNull() +
+                tripF.value +
+                contingencyF.value +
+                alternateF.toFloatOrNull() +
+                finalF.toFloatOrNull() +
+                additionalF.toFloatOrNull() +
+                discretionaryF.toFloatOrNull()
+    }
+
+    fun endurance(): String {
+        val total = totalFuel()
+        val decimal = DecimalFormat("00")
+        val result = (total ?: 0f) / (aircraft?.cruiseFF ?: 1f)
+        val splitedResult = result.toString().split(".")
+        val minutes = ("0.${splitedResult.getOrElse(1) { "0" }}".toFloat()) * 60f
+
+        return "${decimal.format(splitedResult[0].toInt())}${decimal.format(round(minutes))}"
+    }
+
     fun onFieldChanged(field: String, value: String) {
         when (field) {
             "distance" -> distance = value
             "alt_distance" -> altDistance = value
             "taxi_fuel" -> taxiF = value
-            "trip_fuel" -> tripF = value
-            "contingency_fuel" -> contingencyF = value
             "alternate_fuel" -> alternateF = value
             "final_fuel" -> finalF = value
             "additional_fuel" -> additionalF = value
@@ -112,3 +141,6 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
             }
     }
 }
+
+operator fun Float?.plus(other: Float?): Float? =
+    if (this != null && other != null) this + other else this ?: other
