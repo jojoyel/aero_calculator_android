@@ -18,13 +18,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -45,11 +43,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jojo.aerocalculator.R
 import com.jojo.aerocalculator.tools.toFormattedTime
+import com.jojo.aerocalculator.ui.composables.Dropdown
 import com.jojo.aerocalculator.ui.composables.SectionCard
 
 @Composable
 fun FlightPrepScreen() {
     val viewModel = hiltViewModel<FlightPrepViewModel>()
+    val allAircraft by viewModel.allAircraft.collectAsState()
     val flightTime by viewModel.flightTime.collectAsState()
     val altTime by viewModel.altTime.collectAsState()
 
@@ -59,6 +59,7 @@ fun FlightPrepScreen() {
         when (itIs) {
             false -> {
                 val scrollState = rememberScrollState()
+
 
                 Scaffold(floatingActionButton = {
                     ExtendedFloatingActionButton(
@@ -78,19 +79,11 @@ fun FlightPrepScreen() {
                     ) {
                         Spacer(modifier = Modifier.height(12.dp))
                         SectionCard(title = "General information") {
-                            OutlinedTextField(
-                                value = viewModel.aircraft?.ICAO ?: "",
-                                onValueChange = {},
-                                readOnly = true,
-                                label = { Text("Aircraft") }, trailingIcon = {
-                                    IconButton(onClick = { }) {
-                                        Icon(
-                                            Icons.Default.ArrowForwardIos,
-                                            contentDescription = null
-                                        )
-                                    }
-                                }
-                            )
+                            Dropdown(
+                                label = "Aircraft",
+                                data = allAircraft.map { it.ICAO }) { icao ->
+                                viewModel.onAircraftChanged(icao)
+                            }
 
                             HorizontalDivider(Modifier.fillMaxWidth())
 
