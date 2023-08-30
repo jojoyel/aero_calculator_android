@@ -67,7 +67,7 @@ fun TODScreen(navController: NavHostController) {
 
 @Composable
 fun DistanceTod(modifier: Modifier = Modifier) {
-    SectionCard(modifier = Modifier.then(modifier), title = "Distance") {
+    SectionCard(modifier = Modifier.then(modifier), title = stringResource(R.string.distance)) {
         var deltaFl by remember { mutableStateOf("") }
 
         var useVz by remember { mutableStateOf(false) }
@@ -86,8 +86,8 @@ fun DistanceTod(modifier: Modifier = Modifier) {
             maxLines = 1
         )
         SwitchRow(checked = useVz,
-            unselectedLabel = { Text("Use slope") },
-            selectedLabel = { Text("Use Vz") },
+            unselectedLabel = { Text(stringResource(R.string.action_use_slope)) },
+            selectedLabel = { Text(stringResource(R.string.action_use_vz)) },
             onCheckedChange = { useVz = !useVz })
         AnimatedVisibility(
             !useVz,
@@ -121,7 +121,7 @@ fun DistanceTod(modifier: Modifier = Modifier) {
                 OutlinedTextField(
                     value = gs,
                     onValueChange = { gs = it },
-                    label = { Text("Ground speed") },
+                    label = { Text(stringResource(R.string.ground_speed)) },
                     maxLines = 1,
                     suffix = { Text(stringResource(R.string.unit_speed)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -167,7 +167,7 @@ fun DistanceTod(modifier: Modifier = Modifier) {
 
 @Composable
 fun TimeTod(modifier: Modifier = Modifier) {
-    SectionCard(modifier = Modifier.then(modifier), title = "Time") {
+    SectionCard(modifier = Modifier.then(modifier), title = stringResource(R.string.time)) {
         var deltaFl by remember { mutableStateOf("") }
         var vz by remember { mutableStateOf("") }
 
@@ -212,7 +212,7 @@ fun TimeTod(modifier: Modifier = Modifier) {
         OutlinedTextField(
             value = "${result ?: 0}",
             onValueChange = {},
-            suffix = { Text("mins") },
+            suffix = { Text(stringResource(R.string.unit_mins)) },
             readOnly = true
         )
     }

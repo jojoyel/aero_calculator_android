@@ -66,7 +66,7 @@ fun VzSlope(modifier: Modifier = Modifier) {
         var result by remember { mutableStateOf<Int?>(null) }
 
         OutlinedTextField(
-            label = { Text("Gs") },
+            label = { Text(stringResource(R.string.ground_speed_dim)) },
             value = gs,
             onValueChange = { gs = it },
             maxLines = 1,
@@ -112,7 +112,7 @@ fun VzSlope(modifier: Modifier = Modifier) {
 
 @Composable
 fun PercentSlope(modifier: Modifier = Modifier) {
-    SectionCard(title = "%") {
+    SectionCard(title = stringResource(R.string.unit_slope)) {
         var vz by remember { mutableStateOf("") }
         var gs by remember { mutableStateOf("") }
 
@@ -128,7 +128,7 @@ fun PercentSlope(modifier: Modifier = Modifier) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
         OutlinedTextField(
-            label = { Text("Gs") },
+            label = { Text(stringResource(R.string.ground_speed_dim)) },
             value = gs,
             onValueChange = { gs = it },
             maxLines = 1,

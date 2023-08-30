@@ -17,14 +17,49 @@
 	<string name="desc_vw">Wind speed</string>
 
 	<string name="action_calc">Calc.</string>
+	<string name="action_reset">Reset</string>
+
+	<string name="action_using_alt_airport">Using alternate airport</string>
+	<string name="action_use_slope">Use slope</string>
+	<string name="action_use_vz">Use Vz</string>
 
 	<string name="unit_vz" translatable="false">ft/min</string>
+	<string name="unit_mins">mins</string>
 	<string name="unit_speed" translatable="false">kt</string>
 	<string name="unit_slope" translatable="false">%</string>
 	<string name="unit_dist" translatable="false">NM</string>
 	<string name="unit_dir" translatable="false">°</string>
+	<string name="unit_gal" translatable="false">Gal</string>
+	<string name="unit_cons_gal" translatable="false">Gal/h</string>
+	<string name="unit_percent" translatable="false">%</string>
+	<string name="unit_rpm" translatable="false">RPM</string>
 
+	<string name="ground_speed_dim">Gs</string>
+	<string name="ground_speed">Ground speed</string>
+	<string name="time">Time</string>
 	<string name="slopes">Slopes</string>
 	<string name="slope">Slope</string>
 	<string name="winds">Winds</string>
+	<string name="fuel">Fuel</string>
+	<string name="cruise">Cruise</string>
+	<string name="briefing">Briefing</string>
+	<string name="distance">Distance</string>
+	<string name="alternate_distance">Alternate distance</string>
+	<string name="alternate_flight_time">Alternate flight time</string>
+	<string name="aircraft">Aircraft</string>
+	<string name="general_info">General information</string>
+	<string name="flight_time">Flight time</string>
+	<string name="hold">Hold</string>
+	<string name="power">Power</string>
+	<string name="fuel_flow">Fuel flow</string>
+
+	<string name="info_ac_model_engines">%1$s - %2$d engines</string>
+
+	<string name="fuel_taxi">Taxi</string>
+	<string name="fuel_trip">Trip</string>
+	<string name="fuel_contingency">Contingency</string>
+	<string name="fuel_alternate">Alternate</string>
+	<string name="fuel_final">Final</string>
+	<string name="fuel_additional">Additional</string>
+	<string name="fuel_discretionary">Discretionary</string>
 </resources>

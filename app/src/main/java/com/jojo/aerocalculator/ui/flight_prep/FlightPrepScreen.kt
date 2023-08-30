@@ -36,6 +36,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jojo.aerocalculator.R
+import com.jojo.aerocalculator.data.models.aircraft.EngineSpeedType
 import com.jojo.aerocalculator.tools.toFormattedTime
 import com.jojo.aerocalculator.ui.composables.Dropdown
 import com.jojo.aerocalculator.ui.composables.SectionCard
@@ -55,11 +56,10 @@ fun FlightPrepScreen() {
             false -> {
                 val scrollState = rememberScrollState()
 
-
                 Scaffold(floatingActionButton = {
                     ExtendedFloatingActionButton(
                         onClick = { isBriefingPage = true },
-                        text = { Text("Briefing") },
+                        text = { Text(stringResource(R.string.briefing)) },
                         icon = { Icon(Icons.Default.Description, contentDescription = null) },
                         expanded = scrollState.value <= 10
                     )
@@ -73,9 +73,9 @@ fun FlightPrepScreen() {
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Spacer(modifier = Modifier.height(12.dp))
-                        SectionCard(title = "General information") {
+                        SectionCard(title = stringResource(R.string.general_info)) {
                             Dropdown(
-                                label = "Aircraft",
+                                label = stringResource(R.string.aircraft),
                                 data = allAircraft.map { it.ICAO }) { icao ->
                                 viewModel.onAircraftChanged(icao)
                             }
@@ -85,7 +85,7 @@ fun FlightPrepScreen() {
                             OutlinedTextField(
                                 value = viewModel.distance,
                                 onValueChange = { viewModel.onFieldChanged("distance", it) },
-                                label = { Text("Distance") },
+                                label = { Text(stringResource(R.string.distance)) },
                                 suffix = { Text(stringResource(R.string.unit_dist)) },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                 maxLines = 1
@@ -95,12 +95,12 @@ fun FlightPrepScreen() {
                                 onValueChange = {},
                                 readOnly = true,
                                 label = {
-                                    Text("Flight time")
+                                    Text(stringResource(R.string.flight_time))
                                 })
 
                             SwitchRow(
                                 checked = viewModel.haveAlternate,
-                                unselectedLabel = { Text("Using alternate airport") },
+                                unselectedLabel = { Text(stringResource(R.string.action_using_alt_airport)) },
                             ) { viewModel.toggleHaveAlternate() }
 
                             AnimatedVisibility(viewModel.haveAlternate) {
@@ -110,7 +110,7 @@ fun FlightPrepScreen() {
                                         onValueChange = {
                                             viewModel.onFieldChanged("alt_distance", it)
                                         },
-                                        label = { Text("Alternate distance") },
+                                        label = { Text(stringResource(R.string.alternate_distance)) },
                                         suffix = { Text(stringResource(R.string.unit_dist)) },
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                         maxLines = 1
@@ -119,54 +119,56 @@ fun FlightPrepScreen() {
                                         value = altTime.toFormattedTime(),
                                         onValueChange = {},
                                         readOnly = true,
-                                        label = { Text("Alternate flight time") })
+                                        label = { Text(stringResource(R.string.alternate_flight_time)) })
                                 }
                             }
                         }
 
                         SectionCard(title = "Aircraft information") { _ ->
                             viewModel.aircraft.let { ac ->
+                                val speedTypeStringRes = when (ac.engineSpeedType) {
+                                    EngineSpeedType.PERCENT -> R.string.unit_percent
+                                    EngineSpeedType.RPM -> R.string.unit_rpm
+                                }
+
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text("${ac.model} - ${ac.enginesNumber} engines")
+                                    Text(
+                                        stringResource(
+                                            R.string.info_ac_model_engines,
+                                            ac.model,
+                                            ac.enginesNumber
+                                        )
+                                    )
                                     Spacer(modifier = Modifier.weight(1f))
                                     Button(onClick = {
-                                        viewModel.onAircraftChangeDetails(
-                                            "",
-                                            "reset"
-                                        )
+                                        viewModel.onAircraftChangeDetails("", "reset")
                                     }) {
-                                        Text("Reset")
+                                        Text(stringResource(R.string.action_reset))
                                     }
                                 }
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    Text("Cruise", Modifier.weight(.2f))
+                                    Text(stringResource(R.string.cruise), Modifier.weight(.2f))
                                     OutlinedTextField(
                                         value = ac.cruiseFF.toString(),
                                         onValueChange = {
-                                            viewModel.onAircraftChangeDetails(
-                                                it,
-                                                "cruiseFF"
-                                            )
+                                            viewModel.onAircraftChangeDetails(it, "cruiseFF")
                                         },
                                         maxLines = 1,
-                                        suffix = { Text(text = "Gal/h") },
-                                        label = { Text(text = "Fuel flow") },
+                                        suffix = { Text(stringResource(R.string.unit_cons_gal)) },
+                                        label = { Text(stringResource(R.string.fuel_flow)) },
                                         modifier = Modifier.weight(.3f)
                                     )
                                     OutlinedTextField(
                                         value = ac.cruisePwr.toString(),
                                         onValueChange = {
-                                            viewModel.onAircraftChangeDetails(
-                                                it,
-                                                "cruisePwr"
-                                            )
+                                            viewModel.onAircraftChangeDetails(it, "cruisePwr")
                                         },
                                         maxLines = 1,
-                                        label = { Text(text = "Power") },
-                                        suffix = { Text(text = "%") },
+                                        label = { Text(stringResource(R.string.power)) },
+                                        suffix = { Text(stringResource(speedTypeStringRes)) },
                                         modifier = Modifier.weight(.3f)
                                     )
                                 }
@@ -174,38 +176,32 @@ fun FlightPrepScreen() {
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    Text("Hold", Modifier.weight(.2f))
+                                    Text(stringResource(R.string.hold), Modifier.weight(.2f))
                                     OutlinedTextField(
                                         value = ac.holdFF.toString(),
                                         onValueChange = {
-                                            viewModel.onAircraftChangeDetails(
-                                                it,
-                                                "holdFF"
-                                            )
+                                            viewModel.onAircraftChangeDetails(it, "holdFF")
                                         },
                                         maxLines = 1,
-                                        suffix = { Text(text = "Gal/h") },
-                                        label = { Text(text = "Fuel flow") },
+                                        suffix = { Text(stringResource(R.string.unit_cons_gal)) },
+                                        label = { Text(stringResource(R.string.fuel_flow)) },
                                         modifier = Modifier.weight(.3f)
                                     )
                                     OutlinedTextField(
                                         value = ac.holdPwr.toString(),
                                         onValueChange = {
-                                            viewModel.onAircraftChangeDetails(
-                                                it,
-                                                "holdPwr"
-                                            )
+                                            viewModel.onAircraftChangeDetails(it, "holdPwr")
                                         },
                                         maxLines = 1,
-                                        label = { Text(text = "Power") },
-                                        suffix = { Text(text = "%") },
+                                        label = { Text(stringResource(R.string.power)) },
+                                        suffix = { Text(stringResource(speedTypeStringRes)) },
                                         modifier = Modifier.weight(.3f)
                                     )
                                 }
                             }
                         }
 
-                        SectionCard(title = "Fuel") {
+                        SectionCard(title = stringResource(R.string.fuel)) {
                             Column {
                                 val tripF by viewModel.tripF.collectAsState()
                                 val contingencyF by viewModel.contingencyF.collectAsState()
@@ -215,47 +211,46 @@ fun FlightPrepScreen() {
                                 OutlinedTextField(
                                     value = viewModel.taxiF,
                                     onValueChange = { viewModel.onFieldChanged("taxi_fuel", it) },
-                                    label = { Text("Taxi") }, suffix = { Text(text = "Gal") })
+                                    label = { Text(stringResource(R.string.fuel_taxi)) },
+                                    suffix = { Text(stringResource(R.string.unit_gal)) })
                                 OutlinedTextField(
                                     value = tripF.toString(),
                                     onValueChange = { },
-                                    label = { Text("Trip") }, suffix = { Text(text = "Gal") },
+                                    label = { Text(stringResource(R.string.fuel_trip)) },
+                                    suffix = { Text(stringResource(R.string.unit_gal)) },
                                     readOnly = true
                                 )
                                 OutlinedTextField(
                                     value = contingencyF.toString(),
                                     onValueChange = {},
-                                    label = { Text("Contingency") },
-                                    suffix = { Text(text = "Gal") },
+                                    label = { Text(stringResource(R.string.fuel_contingency)) },
+                                    suffix = { Text(stringResource(R.string.unit_gal)) },
                                     readOnly = true
                                 )
                                 OutlinedTextField(
                                     value = alternateF.toString(),
                                     onValueChange = {},
-                                    label = { Text("Alternate") }, suffix = { Text(text = "Gal") })
+                                    label = { Text(stringResource(R.string.fuel_alternate)) },
+                                    suffix = { Text(stringResource(R.string.unit_gal)) })
                                 OutlinedTextField(
                                     value = finalF.toString(),
                                     onValueChange = {},
-                                    label = { Text("Final") }, suffix = { Text(text = "Gal") })
+                                    label = { Text(stringResource(R.string.fuel_final)) },
+                                    suffix = { Text(stringResource(R.string.unit_gal)) })
                                 OutlinedTextField(
                                     value = viewModel.additionalF,
                                     onValueChange = {
-                                        viewModel.onFieldChanged(
-                                            "additional_fuel",
-                                            it
-                                        )
+                                        viewModel.onFieldChanged("additional_fuel", it)
                                     },
-                                    label = { Text("Additional") }, suffix = { Text(text = "Gal") })
+                                    label = { Text(stringResource(R.string.fuel_additional)) },
+                                    suffix = { Text(stringResource(R.string.unit_gal)) })
                                 OutlinedTextField(
                                     value = viewModel.discretionaryF,
                                     onValueChange = {
-                                        viewModel.onFieldChanged(
-                                            "discretionary_fuel",
-                                            it
-                                        )
+                                        viewModel.onFieldChanged("discretionary_fuel", it)
                                     },
-                                    label = { Text("Discretionary") },
-                                    suffix = { Text(text = "Gal") })
+                                    label = { Text(stringResource(R.string.fuel_discretionary)) },
+                                    suffix = { Text(stringResource(R.string.unit_gal)) })
                             }
                         }
 

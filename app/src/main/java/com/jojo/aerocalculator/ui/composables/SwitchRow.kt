@@ -25,8 +25,13 @@ fun SwitchRow(
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
-            .toggleable(checked, true, role = Role.Switch, onValueChange = { onCheckedChange(it) })
-            .padding(8.dp),
+            .toggleable(
+                checked,
+                enabled,
+                role = Role.Switch,
+                onValueChange = { onCheckedChange(it) })
+            .padding(8.dp)
+            .then(modifier),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
