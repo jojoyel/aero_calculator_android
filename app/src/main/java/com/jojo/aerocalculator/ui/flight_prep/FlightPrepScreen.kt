@@ -11,10 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -25,7 +22,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -35,9 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,6 +39,7 @@ import com.jojo.aerocalculator.R
 import com.jojo.aerocalculator.tools.toFormattedTime
 import com.jojo.aerocalculator.ui.composables.Dropdown
 import com.jojo.aerocalculator.ui.composables.SectionCard
+import com.jojo.aerocalculator.ui.composables.SwitchRow
 
 @Composable
 fun FlightPrepScreen() {
@@ -103,27 +98,17 @@ fun FlightPrepScreen() {
                                     Text("Flight time")
                                 })
 
-                            Row(modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .toggleable(
-                                    viewModel.haveAlternate,
-                                    role = Role.Switch
-                                ) { viewModel.toggleHaveAlternate() }
-                                .padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
-                                Text("Using alternate airport")
-                                Spacer(Modifier.width(4.dp))
-                                Switch(checked = viewModel.haveAlternate, onCheckedChange = null)
-                            }
+                            SwitchRow(
+                                checked = viewModel.haveAlternate,
+                                unselectedLabel = { Text("Using alternate airport") },
+                            ) { viewModel.toggleHaveAlternate() }
 
                             AnimatedVisibility(viewModel.haveAlternate) {
                                 Column {
                                     OutlinedTextField(
                                         value = viewModel.altDistance,
                                         onValueChange = {
-                                            viewModel.onFieldChanged(
-                                                "alt_distance",
-                                                it
-                                            )
+                                            viewModel.onFieldChanged("alt_distance", it)
                                         },
                                         label = { Text("Alternate distance") },
                                         suffix = { Text(stringResource(R.string.unit_dist)) },

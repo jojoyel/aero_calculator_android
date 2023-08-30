@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -24,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,7 +32,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,6 +39,7 @@ import androidx.navigation.NavHostController
 import com.jojo.aerocalculator.R
 import com.jojo.aerocalculator.ui.composables.DeltaFlTextInfo
 import com.jojo.aerocalculator.ui.composables.SectionCard
+import com.jojo.aerocalculator.ui.composables.SwitchRow
 import com.jojo.aerocalculator.ui.composables.VzTextInfo
 import kotlin.math.roundToInt
 
@@ -87,17 +85,10 @@ fun DistanceTod(modifier: Modifier = Modifier) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             maxLines = 1
         )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .toggleable(useVz, role = Role.Switch) { useVz = !useVz },
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("Use slope")
-            Switch(checked = useVz, onCheckedChange = null)
-            Text("Use Vz")
-        }
+        SwitchRow(checked = useVz,
+            unselectedLabel = { Text("Use slope") },
+            selectedLabel = { Text("Use Vz") },
+            onCheckedChange = { useVz = !useVz })
         AnimatedVisibility(
             !useVz,
             enter = fadeIn() + expandVertically(),
