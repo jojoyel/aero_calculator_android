@@ -10,9 +10,14 @@ data class Aircraft(
     val cruisePwr: Int,
     val holdFF: Float,
     val holdPwr: Int,
-    val engineType: EngineType
+    val engineType: EngineType,
+    val engineSpeedType: EngineSpeedType
 )
 
 enum class EngineType {
     PISTON, TURBINE
+}
+
+enum class EngineSpeedType {
+    PERCENT, RPM
 }

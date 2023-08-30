@@ -12,7 +12,21 @@ class AircraftRepositoryImpl : AircraftRepository {
             75,
             9.0f,
             40,
-            EngineType.PISTON
+            EngineType.PISTON,
+            EngineSpeedType.PERCENT
+        ),
+        Aircraft(
+            "BE58",
+            "Beechcraft",
+            "Baron 58",
+            2,
+            .32f,
+            13.2f,
+            2300,
+            13.2f,
+            2300,
+            EngineType.PISTON,
+            EngineSpeedType.RPM
         )
     )
 
