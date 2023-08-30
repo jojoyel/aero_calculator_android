@@ -8,12 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jojo.aerocalculator.data.models.aircraft.Aircraft
 import com.jojo.aerocalculator.data.models.aircraft.AircraftRepository
+import com.jojo.aerocalculator.data.models.aircraft.EngineType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.lang.Float.max
@@ -29,6 +31,9 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
     var distance by mutableStateOf("")
         private set
     var altDistance by mutableStateOf("")
+        private set
+
+    var haveAlternate by mutableStateOf(true)
         private set
 
     private val _allAircraft = MutableStateFlow<List<Aircraft>>(emptyList())
@@ -49,11 +54,11 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
         } ?: run { 0f }
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
-    var taxiF by mutableStateOf("")
+    var taxiF by mutableStateOf("1.0")
         private set
 
     var tripF = snapshotFlow { aircraft }.combine(flightTime) { a, time ->
-        round((a?.cruiseFF ?: 1f) * (time / 60f))
+        (((a?.cruiseFF ?: 1f) * (time / 60f)) * 10).roundToInt() / 10f
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
     var contingencyF = snapshotFlow { aircraft }.combine(tripF) { a, tripFuel ->
@@ -62,10 +67,28 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
         } ?: run { 0f }
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
-    var alternateF by mutableStateOf("")
-        private set
-    var finalF by mutableStateOf("")
-        private set
+    var alternateF = combine(
+        snapshotFlow { aircraft },
+        altTime,
+        snapshotFlow { haveAlternate }
+    ) { a, time, haveAlt ->
+        a?.let {
+            if (haveAlt)
+                ((a.cruiseFF) * (time / 60f) * 10).roundToInt() / 10f
+            else
+                ((a.holdFF * .5f) * 10).roundToInt() / 10f
+        } ?: run { 0f }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
+
+    var finalF = snapshotFlow { aircraft }.transform<Aircraft?, Float> { a ->
+        a?.let {
+            if (a.engineType == EngineType.TURBINE)
+                ((it.holdFF * .5f) * 10).roundToInt() / 10f
+            else
+                ((it.holdFF * .75f) * 10).roundToInt() / 10f
+        } ?: run { 0f }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
+
     var additionalF by mutableStateOf("")
         private set
     var discretionaryF by mutableStateOf("")
@@ -84,8 +107,8 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
         return taxiF.toFloatOrNull() +
                 tripF.value +
                 contingencyF.value +
-                alternateF.toFloatOrNull() +
-                finalF.toFloatOrNull() +
+                alternateF.value +
+                finalF.value +
                 additionalF.toFloatOrNull() +
                 discretionaryF.toFloatOrNull()
     }
@@ -105,11 +128,13 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
             "distance" -> distance = value
             "alt_distance" -> altDistance = value
             "taxi_fuel" -> taxiF = value
-            "alternate_fuel" -> alternateF = value
-            "final_fuel" -> finalF = value
             "additional_fuel" -> additionalF = value
             "discretionary_fuel" -> discretionaryF = value
         }
+    }
+
+    fun toggleHaveAlternate() {
+        haveAlternate = !haveAlternate
     }
 
     fun onAircraftChanged(ICAO: String) {

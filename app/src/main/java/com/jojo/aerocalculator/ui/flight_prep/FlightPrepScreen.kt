@@ -1,6 +1,7 @@
 package com.jojo.aerocalculator.ui.flight_prep
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -23,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -32,7 +37,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -95,29 +102,48 @@ fun FlightPrepScreen() {
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                 maxLines = 1
                             )
-
                             OutlinedTextField(
-                                value = viewModel.altDistance,
-                                onValueChange = { viewModel.onFieldChanged("alt_distance", it) },
-                                label = { Text("Alternate distance") },
-                                suffix = { Text(stringResource(R.string.unit_dist)) },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                                maxLines = 1
-                            )
-
-                            OutlinedTextField(
-                                value = flightTime?.toFormattedTime() ?: "00h 00min 00sec",
+                                value = flightTime.toFormattedTime(),
                                 onValueChange = {},
                                 readOnly = true,
                                 label = {
                                     Text("Flight time")
                                 })
 
-                            OutlinedTextField(
-                                value = altTime?.toFormattedTime() ?: "00h 00min 00sec",
-                                onValueChange = {},
-                                readOnly = true,
-                                label = { Text("Alternate flight time") })
+                            Row(modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .toggleable(
+                                    viewModel.haveAlternate,
+                                    role = Role.Switch
+                                ) { viewModel.toggleHaveAlternate() }
+                                .padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
+                                Text("Using alternate airport")
+                                Spacer(Modifier.width(4.dp))
+                                Switch(checked = viewModel.haveAlternate, onCheckedChange = null)
+                            }
+
+                            AnimatedVisibility(viewModel.haveAlternate) {
+                                Column {
+                                    OutlinedTextField(
+                                        value = viewModel.altDistance,
+                                        onValueChange = {
+                                            viewModel.onFieldChanged(
+                                                "alt_distance",
+                                                it
+                                            )
+                                        },
+                                        label = { Text("Alternate distance") },
+                                        suffix = { Text(stringResource(R.string.unit_dist)) },
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                        maxLines = 1
+                                    )
+                                    OutlinedTextField(
+                                        value = altTime.toFormattedTime(),
+                                        onValueChange = {},
+                                        readOnly = true,
+                                        label = { Text("Alternate flight time") })
+                                }
+                            }
                         }
 
                         SectionCard(title = "Aircraft information") { _ ->
@@ -205,6 +231,8 @@ fun FlightPrepScreen() {
                             Column {
                                 val tripF by viewModel.tripF.collectAsState()
                                 val contingencyF by viewModel.contingencyF.collectAsState()
+                                val alternateF by viewModel.alternateF.collectAsState()
+                                val finalF by viewModel.finalF.collectAsState()
 
                                 OutlinedTextField(
                                     value = viewModel.taxiF,
@@ -224,17 +252,12 @@ fun FlightPrepScreen() {
                                     readOnly = true
                                 )
                                 OutlinedTextField(
-                                    value = viewModel.alternateF,
-                                    onValueChange = {
-                                        viewModel.onFieldChanged(
-                                            "alternate_fuel",
-                                            it
-                                        )
-                                    },
+                                    value = alternateF.toString(),
+                                    onValueChange = {},
                                     label = { Text("Alternate") }, suffix = { Text(text = "Gal") })
                                 OutlinedTextField(
-                                    value = viewModel.finalF,
-                                    onValueChange = { viewModel.onFieldChanged("final_fuel", it) },
+                                    value = finalF.toString(),
+                                    onValueChange = {},
                                     label = { Text("Final") }, suffix = { Text(text = "Gal") })
                                 OutlinedTextField(
                                     value = viewModel.additionalF,
@@ -280,8 +303,10 @@ fun FlightPrepScreen() {
                     HorizontalDivider()
                     Text("Flight distance : ${viewModel.distance}")
                     Text("Flight time : ${flightTime.toFormattedTime()}")
-                    Text("Alternate distance : ${viewModel.altDistance}")
-                    Text("Alternate time : ${altTime.toFormattedTime()}")
+                    if (viewModel.haveAlternate) {
+                        Text("Alternate distance : ${viewModel.altDistance}")
+                        Text("Alternate time : ${altTime.toFormattedTime()}")
+                    }
                     HorizontalDivider()
                     Text("Fuel")
                     Text("Total fuel : ${viewModel.totalFuel() ?: 0} Gal")
