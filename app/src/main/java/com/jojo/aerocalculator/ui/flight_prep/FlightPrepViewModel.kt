@@ -88,10 +88,12 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
     var finalF = snapshotFlow { aircraft }.transform<Aircraft, Float> { a ->
-        if (a.engineType == EngineType.TURBINE)
+        val f = if (a.engineType == EngineType.TURBINE)
             ((a.holdFF * .5f) * 10).roundToInt() / 10f
         else
             ((a.holdFF * .75f) * 10).roundToInt() / 10f
+
+        emit(f)
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
     var additionalF by mutableStateOf("")
