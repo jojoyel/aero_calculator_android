@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jojo.aerocalculator.data.models.aircraft.Aircraft
 import com.jojo.aerocalculator.data.models.aircraft.AircraftRepository
+import com.jojo.aerocalculator.data.models.aircraft.EngineSpeedType
 import com.jojo.aerocalculator.data.models.aircraft.EngineType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,32 +40,40 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
     private val _allAircraft = MutableStateFlow<List<Aircraft>>(emptyList())
     val allAircraft = _allAircraft.asStateFlow()
 
-    var aircraft by mutableStateOf<Aircraft?>(null)
+    var aircraft by mutableStateOf(
+        Aircraft(
+            "",
+            "",
+            "",
+            0,
+            0f,
+            0f,
+            0,
+            0f,
+            0,
+            EngineType.PISTON,
+            EngineSpeedType.RPM
+        )
+    )
         private set
 
     val flightTime = snapshotFlow { distance }.combine(snapshotFlow { aircraft }) { d, a ->
-        a?.let {
-            it.baseFactor * (d.toFloatOrNull() ?: 0f)
-        } ?: run { 0f }
+        a.baseFactor * (d.toFloatOrNull() ?: 0f)
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
     val altTime = snapshotFlow { altDistance }.combine(snapshotFlow { aircraft }) { d, a ->
-        a?.let {
-            it.baseFactor * (d.toFloatOrNull() ?: 0f)
-        } ?: run { 0f }
+        a.baseFactor * (d.toFloatOrNull() ?: 0f)
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
     var taxiF by mutableStateOf("1.0")
         private set
 
     var tripF = snapshotFlow { aircraft }.combine(flightTime) { a, time ->
-        (((a?.cruiseFF ?: 1f) * (time / 60f)) * 10).roundToInt() / 10f
+        (((a.cruiseFF) * (time / 60f)) * 10).roundToInt() / 10f
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
     var contingencyF = snapshotFlow { aircraft }.combine(tripF) { a, tripFuel ->
-        a?.let {
-            (max(tripFuel * 0.05f, (5 * it.cruiseFF) / 60) * 10).roundToInt() / 10f
-        } ?: run { 0f }
+        (max(tripFuel * 0.05f, (5 * a.cruiseFF) / 60) * 10).roundToInt() / 10f
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
     var alternateF = combine(
@@ -72,21 +81,17 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
         altTime,
         snapshotFlow { haveAlternate }
     ) { a, time, haveAlt ->
-        a?.let {
             if (haveAlt)
                 ((a.cruiseFF) * (time / 60f) * 10).roundToInt() / 10f
             else
                 ((a.holdFF * .5f) * 10).roundToInt() / 10f
-        } ?: run { 0f }
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
-    var finalF = snapshotFlow { aircraft }.transform<Aircraft?, Float> { a ->
-        a?.let {
-            if (a.engineType == EngineType.TURBINE)
-                ((it.holdFF * .5f) * 10).roundToInt() / 10f
-            else
-                ((it.holdFF * .75f) * 10).roundToInt() / 10f
-        } ?: run { 0f }
+    var finalF = snapshotFlow { aircraft }.transform<Aircraft, Float> { a ->
+        if (a.engineType == EngineType.TURBINE)
+            ((a.holdFF * .5f) * 10).roundToInt() / 10f
+        else
+            ((a.holdFF * .75f) * 10).roundToInt() / 10f
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
     var additionalF by mutableStateOf("")
@@ -116,7 +121,7 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
     fun endurance(): String {
         val total = totalFuel()
         val decimal = DecimalFormat("00")
-        val result = (total ?: 0f) / (aircraft?.cruiseFF ?: 1f)
+        val result = (total ?: 0f) / aircraft.cruiseFF
         val splitedResult = result.toString().split(".")
         val minutes = ("0.${splitedResult.getOrElse(1) { "0" }}".toFloat()) * 60f
 
@@ -148,19 +153,19 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
     fun onAircraftChangeDetails(value: String, field: String) {
         aircraft =
             when (field) {
-                "cruiseFF" -> value.toFloatOrNull()?.let { aircraft?.copy(cruiseFF = it) }
+                "cruiseFF" -> value.toFloatOrNull()?.let { aircraft.copy(cruiseFF = it) }
                     ?: run { aircraft }
 
-                "cruisePwr" -> value.toIntOrNull()?.let { aircraft?.copy(cruisePwr = it) }
+                "cruisePwr" -> value.toIntOrNull()?.let { aircraft.copy(cruisePwr = it) }
                     ?: run { aircraft }
 
-                "holdFF" -> value.toFloatOrNull()?.let { aircraft?.copy(holdFF = it) }
+                "holdFF" -> value.toFloatOrNull()?.let { aircraft.copy(holdFF = it) }
                     ?: run { aircraft }
 
-                "holdPwr" -> value.toIntOrNull()?.let { aircraft?.copy(holdPwr = it) }
+                "holdPwr" -> value.toIntOrNull()?.let { aircraft.copy(holdPwr = it) }
                     ?: run { aircraft }
 
-                "reset" -> allAircraft.value.first { it.ICAO == aircraft?.ICAO }
+                "reset" -> allAircraft.value.first { it.ICAO == aircraft.ICAO }
 
                 else -> aircraft
             }

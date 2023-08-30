@@ -140,7 +140,7 @@ fun FlightPrepScreen() {
                         }
 
                         SectionCard(title = "Aircraft information") { _ ->
-                            viewModel.aircraft?.let { ac ->
+                            viewModel.aircraft.let { ac ->
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text("${ac.model} - ${ac.enginesNumber} engines")
                                     Spacer(modifier = Modifier.weight(1f))
@@ -289,10 +289,10 @@ fun FlightPrepScreen() {
                         .fillMaxSize()
                         .padding(24.dp)
                 ) {
-                    Text("Aircraft : ${viewModel.aircraft?.model}")
-                    Text("Base factor : ${viewModel.aircraft?.baseFactor}")
-                    Text("Cruise power : ${viewModel.aircraft?.cruisePwr} %")
-                    Text("Holding power : ${viewModel.aircraft?.holdPwr} %")
+                    Text("Aircraft : ${viewModel.aircraft.model}")
+                    Text("Base factor : ${viewModel.aircraft.baseFactor}")
+                    Text("Cruise power : ${viewModel.aircraft.cruisePwr} %")
+                    Text("Holding power : ${viewModel.aircraft.holdPwr} %")
                     HorizontalDivider()
                     Text("Flight distance : ${viewModel.distance}")
                     Text("Flight time : ${flightTime.toFormattedTime()}")
