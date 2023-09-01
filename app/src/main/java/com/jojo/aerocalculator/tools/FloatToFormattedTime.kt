@@ -7,7 +7,7 @@ import kotlin.math.truncate
 fun Float.toFormattedTime(): String {
     val decimal = DecimalFormat("00")
 
-    return "${decimal.format(truncate(this) / 60)}h ${decimal.format(truncate(this).toInt() % 60)}min ${
+    return "${decimal.format(truncate(truncate(this) / 60))}h ${decimal.format(truncate(this).toInt() % 60)}min ${
         decimal.format(
             ((this - truncate(this)) * 60f).roundToInt()
         )

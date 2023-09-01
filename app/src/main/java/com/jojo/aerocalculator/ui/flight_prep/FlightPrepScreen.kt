@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,12 +57,14 @@ fun FlightPrepScreen() {
             false -> {
                 val scrollState = rememberScrollState()
 
+                val fabExtended by remember { derivedStateOf { scrollState.value <= 50 } }
+
                 Scaffold(floatingActionButton = {
                     ExtendedFloatingActionButton(
                         onClick = { isBriefingPage = true },
                         text = { Text(stringResource(R.string.briefing)) },
                         icon = { Icon(Icons.Default.Description, contentDescription = null) },
-                        expanded = scrollState.value <= 10
+                        expanded = fabExtended
                     )
                 }) { paddingValues ->
                     Column(
@@ -115,6 +118,7 @@ fun FlightPrepScreen() {
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                         maxLines = 1
                                     )
+                                    Spacer(Modifier.height(8.dp))
                                     OutlinedTextField(
                                         value = altTime.toFormattedTime(),
                                         onValueChange = {},

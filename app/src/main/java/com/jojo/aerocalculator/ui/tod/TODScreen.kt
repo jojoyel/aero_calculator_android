@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.jojo.aerocalculator.R
+import com.jojo.aerocalculator.tools.roundWithOneDecimal
 import com.jojo.aerocalculator.ui.composables.DeltaFlTextInfo
 import com.jojo.aerocalculator.ui.composables.SectionCard
 import com.jojo.aerocalculator.ui.composables.SwitchRow
@@ -142,7 +143,7 @@ fun DistanceTod(modifier: Modifier = Modifier) {
                         val speed = gs.toIntOrNull() ?: return@Button
                         val rate = vz.toIntOrNull() ?: return@Button
 
-                        ((speed * (d * 100)) / (60 * rate) * 10.0).roundToInt() / 10.0f
+                        ((speed * (d * 100)) / (60f * rate)).roundWithOneDecimal()
                     }
                 },
                 enabled = if (useVz) gs.isNotEmpty() && vz.isNotEmpty() else deltaFl.isNotEmpty() && slope.isNotEmpty()
@@ -195,8 +196,7 @@ fun TimeTod(modifier: Modifier = Modifier) {
                 val d = deltaFl.toIntOrNull() ?: return@Button
                 val v = vz.toIntOrNull() ?: return@Button
 
-                val calc =
-                    ((((d * 100) / v) * 10.0).roundToInt() / 10.0f).toString().split(".")
+                val calc = ((d * 100f) / v).roundWithOneDecimal().toString().split(".")
 
                 result = "${calc[0]}:${(calc[1].toIntOrNull() ?: 0) * 60}"
             }, enabled = deltaFl.isNotEmpty() && vz.isNotEmpty()) {

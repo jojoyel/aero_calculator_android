@@ -10,6 +10,7 @@ import com.jojo.aerocalculator.data.models.aircraft.Aircraft
 import com.jojo.aerocalculator.data.models.aircraft.AircraftRepository
 import com.jojo.aerocalculator.data.models.aircraft.EngineSpeedType
 import com.jojo.aerocalculator.data.models.aircraft.EngineType
+import com.jojo.aerocalculator.tools.roundWithOneDecimal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,7 +24,6 @@ import java.lang.Float.max
 import java.text.DecimalFormat
 import javax.inject.Inject
 import kotlin.math.round
-import kotlin.math.roundToInt
 
 @HiltViewModel
 class FlightPrepViewModel @Inject constructor(private val aircraftRepository: AircraftRepository) :
@@ -68,30 +68,30 @@ class FlightPrepViewModel @Inject constructor(private val aircraftRepository: Ai
     var taxiF by mutableStateOf("1.0")
         private set
 
-    var tripF = snapshotFlow { aircraft }.combine(flightTime) { a, time ->
-        (((a.cruiseFF) * (time / 60f)) * 10).roundToInt() / 10f
+    val tripF = snapshotFlow { aircraft }.combine(flightTime) { a, time ->
+        ((a.cruiseFF) * (time / 60f)).roundWithOneDecimal()
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
-    var contingencyF = snapshotFlow { aircraft }.combine(tripF) { a, tripFuel ->
-        (max(tripFuel * 0.05f, (5 * a.cruiseFF) / 60) * 10).roundToInt() / 10f
+    val contingencyF = snapshotFlow { aircraft }.combine(tripF) { a, tripFuel ->
+        max(tripFuel * 0.05f, (5 * a.cruiseFF) / 60).roundWithOneDecimal()
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
-    var alternateF = combine(
+    val alternateF = combine(
         snapshotFlow { aircraft },
         altTime,
         snapshotFlow { haveAlternate }
     ) { a, time, haveAlt ->
-            if (haveAlt)
-                ((a.cruiseFF) * (time / 60f) * 10).roundToInt() / 10f
-            else
-                ((a.holdFF * .5f) * 10).roundToInt() / 10f
+        if (haveAlt)
+            ((a.cruiseFF) * (time / 60f)).roundWithOneDecimal()
+        else
+            (a.holdFF * .5f).roundWithOneDecimal()
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
 
-    var finalF = snapshotFlow { aircraft }.transform<Aircraft, Float> { a ->
+    val finalF = snapshotFlow { aircraft }.transform { a ->
         val f = if (a.engineType == EngineType.TURBINE)
-            ((a.holdFF * .5f) * 10).roundToInt() / 10f
+            (a.holdFF * .5f).roundWithOneDecimal()
         else
-            ((a.holdFF * .75f) * 10).roundToInt() / 10f
+            (a.holdFF * .75f).roundWithOneDecimal()
 
         emit(f)
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)

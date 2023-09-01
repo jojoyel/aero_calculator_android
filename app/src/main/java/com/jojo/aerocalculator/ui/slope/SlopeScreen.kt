@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jojo.aerocalculator.R
+import com.jojo.aerocalculator.tools.roundWithOneDecimal
 import com.jojo.aerocalculator.ui.composables.SectionCard
 import com.jojo.aerocalculator.ui.composables.VzTextInfo
 import kotlin.math.roundToInt
@@ -141,7 +142,7 @@ fun PercentSlope(modifier: Modifier = Modifier) {
                 val s = gs.toIntOrNull() ?: return@Button
                 val v = vz.toFloatOrNull() ?: return@Button
 
-                result = ((v / s) * 10.0).roundToInt() / 10.0f
+                result = (v / s).roundWithOneDecimal()
             }, enabled = gs.isNotEmpty() && vz.isNotEmpty()) {
                 Text(stringResource(R.string.action_calc))
             }
