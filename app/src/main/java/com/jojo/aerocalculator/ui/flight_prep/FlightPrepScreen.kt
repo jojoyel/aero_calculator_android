@@ -161,6 +161,7 @@ fun FlightPrepScreen() {
                                             viewModel.onAircraftChangeDetails(it, "cruiseFF")
                                         },
                                         maxLines = 1,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                         suffix = { Text(stringResource(R.string.unit_cons_gal)) },
                                         label = { Text(stringResource(R.string.fuel_flow)) },
                                         modifier = Modifier.weight(.3f)
@@ -171,6 +172,7 @@ fun FlightPrepScreen() {
                                             viewModel.onAircraftChangeDetails(it, "cruisePwr")
                                         },
                                         maxLines = 1,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                         label = { Text(stringResource(R.string.power)) },
                                         suffix = { Text(stringResource(speedTypeStringRes)) },
                                         modifier = Modifier.weight(.3f)
@@ -187,6 +189,7 @@ fun FlightPrepScreen() {
                                             viewModel.onAircraftChangeDetails(it, "holdFF")
                                         },
                                         maxLines = 1,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                         suffix = { Text(stringResource(R.string.unit_cons_gal)) },
                                         label = { Text(stringResource(R.string.fuel_flow)) },
                                         modifier = Modifier.weight(.3f)
@@ -197,6 +200,7 @@ fun FlightPrepScreen() {
                                             viewModel.onAircraftChangeDetails(it, "holdPwr")
                                         },
                                         maxLines = 1,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                         label = { Text(stringResource(R.string.power)) },
                                         suffix = { Text(stringResource(speedTypeStringRes)) },
                                         modifier = Modifier.weight(.3f)
@@ -216,7 +220,10 @@ fun FlightPrepScreen() {
                                     value = viewModel.taxiF,
                                     onValueChange = { viewModel.onFieldChanged("taxi_fuel", it) },
                                     label = { Text(stringResource(R.string.fuel_taxi)) },
-                                    suffix = { Text(stringResource(R.string.unit_gal)) })
+                                    suffix = { Text(stringResource(R.string.unit_gal)) },
+                                    maxLines = 1,
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                                )
                                 OutlinedTextField(
                                     value = tripF.toString(),
                                     onValueChange = { },
@@ -235,26 +242,36 @@ fun FlightPrepScreen() {
                                     value = alternateF.toString(),
                                     onValueChange = {},
                                     label = { Text(stringResource(R.string.fuel_alternate)) },
-                                    suffix = { Text(stringResource(R.string.unit_gal)) })
+                                    suffix = { Text(stringResource(R.string.unit_gal)) },
+                                    readOnly = true
+                                )
                                 OutlinedTextField(
                                     value = finalF.toString(),
                                     onValueChange = {},
                                     label = { Text(stringResource(R.string.fuel_final)) },
-                                    suffix = { Text(stringResource(R.string.unit_gal)) })
+                                    suffix = { Text(stringResource(R.string.unit_gal)) },
+                                    readOnly = true
+                                )
                                 OutlinedTextField(
                                     value = viewModel.additionalF,
                                     onValueChange = {
                                         viewModel.onFieldChanged("additional_fuel", it)
                                     },
                                     label = { Text(stringResource(R.string.fuel_additional)) },
-                                    suffix = { Text(stringResource(R.string.unit_gal)) })
+                                    suffix = { Text(stringResource(R.string.unit_gal)) },
+                                    maxLines = 1,
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                                )
                                 OutlinedTextField(
                                     value = viewModel.discretionaryF,
                                     onValueChange = {
                                         viewModel.onFieldChanged("discretionary_fuel", it)
                                     },
                                     label = { Text(stringResource(R.string.fuel_discretionary)) },
-                                    suffix = { Text(stringResource(R.string.unit_gal)) })
+                                    suffix = { Text(stringResource(R.string.unit_gal)) },
+                                    maxLines = 1,
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                                )
                             }
                         }
 
