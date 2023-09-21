@@ -7,6 +7,7 @@ sealed class Routes(val route: String) {
     object Slope : Routes("slope")
     object FlightPrep : Routes("flight_prep")
     object Wind : Routes("wind")
+    object Metar : Routes("metar")
 
     override fun toString(): String {
         return this.route

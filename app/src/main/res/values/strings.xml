@@ -62,4 +62,5 @@
 	<string name="fuel_final">Final</string>
 	<string name="fuel_additional">Additional</string>
 	<string name="fuel_discretionary">Discretionary</string>
+    <string name="nav_metar">Metar</string>
 </resources>

@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.jojo.aerocalculator.ui.flight_prep.FlightPrepScreen
 import com.jojo.aerocalculator.ui.home.HomeScreen
+import com.jojo.aerocalculator.ui.metar.MetarScreen
 import com.jojo.aerocalculator.ui.slope.SlopeScreen
 import com.jojo.aerocalculator.ui.tod.TODScreen
 import com.jojo.aerocalculator.ui.wind.WindScreen
@@ -36,6 +39,16 @@ fun MainNav(navController: NavHostController, paddingValues: PaddingValues) {
         }
         composable(Routes.Wind.route) {
             WindScreen()
+        }
+
+        composable(
+            "${Routes.Metar.route}?airport={airport}",
+            arguments = listOf(navArgument("airport") {
+                type = NavType.StringType
+                nullable = true
+            })
+        ) {
+            MetarScreen()
         }
     }
 }
