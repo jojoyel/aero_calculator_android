@@ -18,7 +18,6 @@ import javax.inject.Inject
 class MetarViewModel @Inject constructor(savedStateHandle: SavedStateHandle) : ViewModel() {
 
     var result = mutableStateOf("")
-    var icao = mutableStateOf("")
 
     private val okHttp by lazy {
         OkHttpClient.Builder()
@@ -43,16 +42,19 @@ class MetarViewModel @Inject constructor(savedStateHandle: SavedStateHandle) : V
 
         icao?.let {
             viewModelScope.launch {
-                val metar = retrofit.metar("LFPG")
+                val metar = retrofit.metar(it)
                 result.value = metar.data.first()
             }
         }
     }
 
     fun onFetch(icao: String) {
+        if (icao.length != 4) return
+
         viewModelScope.launch {
             val metar = retrofit.metar(icao)
-            result.value = metar.data.first()
+            if (metar.data.isNotEmpty())
+                result.value = metar.data.first()
         }
     }
 }
